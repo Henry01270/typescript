@@ -13,9 +13,10 @@ type NewNullType = null;
 type NewNumberType = number;
 
 type MaleOrFemale = 'male' | 'female';
-// 'male' 또는 'female'로 지정
+// union : 'male' 또는 'female'로 지정
 
 const stringVar: NewStringType = 'test';
+
 /// java script는 웹에서 하나의 파일로 인식되기 때문에
 /// 다른 파일에 같은 변수명으로 선언해도 충돌함
 /// tsconfig에서 modulDetection을 'auto'에서 'force'로
