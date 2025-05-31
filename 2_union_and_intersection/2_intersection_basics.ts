@@ -28,7 +28,7 @@
  
 
  type NumberAndString = number & string;
- // primitive 타입을 인터섹션을 만들어버리면 never 타입으로 변경된다.
+ // primitive 타입을 intersection으로 만들어버리면 never 타입으로 변경된다.
 
  // let numberAndString: NumberAndString = null;
  // => 어떤 값을 넣어도 err
