@@ -98,19 +98,58 @@ const cat: Cat = {
 }
 
 /**
- * Overriding
+ * Type Overriding
  */
 type THeight = {
     height: number;
 }
 
 type TRectangle = THeight & {
-    height: string;
+    // height: string;
     // height 값을 number에서 string으로 오버라이딩
     width: number;
 }
 
-const rectangle: TRectangle = {
-    height: ,
+// const rectangle: TRectangle = {
+//     height: , 
+//     overriding을하면 height값이 never 타입이 되므로
+//     프로퍼티의 값을 입력할 수 없다.
+//     width: 100,
+// }
+
+// Type Overriding이 유용한 경우
+
+type TWidth = {
+    width: number | string;
+}
+type TRectangle2 = TWidth & {
+    width: number;
+    // overriding 과정에서 처음 선언한 TWidth의 
+    // width union 타입이 number로 narrowing이 됨
+    // union을 사용하면 정확한 type으로 narrowing이 된다.
+    height: number;
+}
+const rectangle: TRectangle2 = {
+    height: 100,
     width: 100,
 }
+
+
+interface IHeight{
+    height: number;
+}
+// interface IRectangle extends IHeight{
+//     height: string; 
+//     err > interface에서 overriding 자체를 막아버린다.
+//     width: number;
+// }
+interface IWidth{
+    width: number | string;
+}
+interface IRectangle extends IWidth{
+    width: number;
+    height: number;
+}
+
+// 결론, type은 override로 다른 primitive type들을 overriding이
+// 가능해 never 타입을 만들지만 interface는 처음부터 err로 막아버린다.
