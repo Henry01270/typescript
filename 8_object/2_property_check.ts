@@ -18,7 +18,7 @@ const iu = {
 
 // const iu: TName = {
 //     name: '아이유',
-//     age: 30
+//     age: 30,
 // }
 // age 프로퍼티가 초과되므로 err
 
