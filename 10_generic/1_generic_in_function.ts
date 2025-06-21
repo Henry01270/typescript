@@ -82,7 +82,7 @@ class Car {
     }
 }
 
-// !!!!!!!!!!!!!!!!!!
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 function instantiator<T extends { new (...args: any[]) : {}}>(constructor: T, ...args: any[]) {
 // T type을 generic을 선언하여, constructor에서 파라미터를
