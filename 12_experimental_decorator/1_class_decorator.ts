@@ -11,7 +11,7 @@
 // 클래스 위에 @로 데코레이터를 입력하면,
 // 파라미터로 데코레이팅을 한 대상 클래스를 받아볼 수 있다.
 @Frozen
-@LogTest('PRDD')
+@LogTest('PROD')
 @ChangeClass
 class idol {
     name: string;
@@ -61,7 +61,7 @@ console.log(wonYoung);
 
 
 // 데코레이션한 클래스를 변경하는법
-function ChangeClass<T extends {new(...args:any[]): {}}> (constructor: T) {
+function ChangeClass<T extends {new (...args:any[]): {}}> (constructor: T) {
 // new를 사용해서 인스턴스화 할 수 있는 constructor로 선언하기
     return class extends constructor {
         groupName = '아이브';
