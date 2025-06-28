@@ -18,7 +18,7 @@ function RestrictParamValue<T>(restrictedValues: T[]) {
     return (target: any, propertyKey: string, index: number) => {
         const prevMeta = Reflect.getOwnMetadata(restrictParamValueKey, target, propertyKey) ?? [];
         // sing 메서드에 메타데이터를 저장하여, 다른 메타 데이터들과 겹치지 않게 함.
-        // sing 메서드에 데코레이팅하면 target은 Idol class가 된다.
+        // sing 메서드에 데코레이팅하면 target은 idol.prototype 된다.
         // propertyKey는 메서드의 이름
         // ?? [] 만약 저장된게 없다면 리스트 반환
 
@@ -27,7 +27,7 @@ function RestrictParamValue<T>(restrictedValues: T[]) {
             restrictedValues,
             // RestrictParamValue로 #(태그)를 한 값에 들어가 있는 값들을
             // 파라미터 값에 들어가 있는 값들을 전부다 
-            // 몇번째 파라미터인가 해서 제한된 값들을 정리를 해놓을 수 있따.
+            // 몇번째 파라미터인가 해서 제한된 값들을 정리를 해놓을 수 있다.
 
 
         }
@@ -39,6 +39,30 @@ function RestrictParamValue<T>(restrictedValues: T[]) {
         ], target, propertyKey)
 
         console.log(Reflect.getOwnMetadata(restrictParamValueKey, target, propertyKey));
+    }
+}
+
+function ValidatedMethod(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+    const metas: RestrictionInfo<any>[] = Reflect.getOwnMetadata(
+        restrictParamValueKey,
+        target,
+        propertyKey
+    ) ?? [];
+
+    const original = descriptor.value;
+
+    descriptor.value = function(...args: any) {
+        const invalids = metas.filter(
+            (x) => !x.restrictedValues.includes(args[x.index])
+            // RestrictParamValue에 존재하지 않는 경우만 필터
+        );
+
+        if(invalids.length > 0) {
+            throw Error(`잘못된 값입니다. ${invalids.map(x => args[x.index]).join(', ')}`);
+            // 잘못된 값들을 표시
+        }
+
+        return original.apply(this, args);
     }
 }
 
@@ -56,7 +80,10 @@ class Idol {
     // 실제 런타임에선 문제가 일어나지 않는다.
 
     // TS에서만 제약하지 않고 JS 런타임에서도 제약이 가능하게 하귀 위해선
-    sing(@RestrictParamValue(['신나게', '열정적으로']) style: string) {
+    @ValidatedMethod
+    sing(@RestrictParamValue(['신나게', '열정적으로']) style: string,
+    @RestrictParamValue([1, 2, 3]) ranking: number) {
+    // RestrictParamValue 태그를 사용해서 1, 2, 3만 가능하도록 제한
         return `${this.name}이 ${style} 노래를 부릅니다.`;
     }
 }
@@ -64,7 +91,8 @@ class Idol {
 const yuJin = new Idol('안유진', 23);
 
 console.log('----sing----');
-console.log(yuJin.sing('신나게'));
-console.log(yuJin.sing('열정적으로'));
-console.log(yuJin.sing('기분나쁘게'));
-// 1318 제외기능이 작동하지 않고 있따.
+console.log(yuJin.sing('신나게', 1));
+console.log(yuJin.sing('열정적으로', 2));
+
+// console.log(yuJin.sing('기분나쁘게', 4));
+// > throw Error: 잘못된 값입니다. 4, 기분나쁘게
